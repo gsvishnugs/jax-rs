@@ -36,9 +36,11 @@ public class HelloWorld {
 
     @GET
     @Path("/json")
-    @Produces({ "application/json" })
+    @Produces({ "application/html" })
     public String getHelloWorldJSON() {
-        return "{\"result\":\"" + helloService.createHelloMessage("World") + "\"}";
+	String result = "<html><head><title>test</title></head><body><h1>Home></h1><p>Home page</p></body></html>"
+        //return "{\"result\":\"" + helloService.createHelloMessage("World") + "\"}";
+	return result;
     }
 
     @GET
