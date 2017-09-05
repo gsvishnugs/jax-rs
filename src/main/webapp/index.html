@@ -119,7 +119,7 @@
 			$("a.mdl-layout__tab").click(function() {
 				if(this.href.indexOf("#scroll-tab-2") !== -1) {
 					var request = $.ajax({
-        				url: "/accounts-wa/rest/entries",
+        				url: "/rest/entries",
         				type: "GET"
         			});
 		    		request.done(function(response) {
@@ -139,7 +139,7 @@
 		    	var text = $(this).val();
 		        if(text.length >= 4) {
 		        	var request = $.ajax({
-		        				url: "/accounts-wa/rest/autocomplete/descriptions?text=" + text,
+		        				url: "/rest/autocomplete/descriptions?text=" + text,
 		        				type: "GET"
 		        			});
 	        		request.done(function(response) {
@@ -165,7 +165,7 @@
 		    	requestObject.transactionType = $("input[name='tx-options']:checked").val();
 		    	requestObject.amount = $('#sample4').val();
 		    	$.ajax({
-    				url: "/accounts-wa/rest/entry",
+    				url: "/rest/entry",
     				type: "PUT",
     				data: JSON.stringify(requestObject),
        				dataType: "json",
