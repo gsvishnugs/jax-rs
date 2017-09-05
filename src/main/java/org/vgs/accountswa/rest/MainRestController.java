@@ -17,12 +17,17 @@
 package org.vgs.accountswa.rest;
 
 import javax.inject.Inject;
+import javax.validation.constraints.Size;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.vgs.accountswa.model.Entry;
 import org.vgs.accountswa.util.AccountService;
 
 @Path("/")
@@ -32,10 +37,26 @@ public class MainRestController {
 	AccountService accountService;
 
 	@GET
-	@Path("/json")
+	@Path("/entries")
 	@Produces({ "application/json" })
-	public Response getHelloWorldJSON() throws Exception {
+	public Response getAllEntries() throws Exception {
 		return Response.ok(accountService.getAllEntries(), MediaType.APPLICATION_JSON).build();
+	}
+
+	@GET
+	@Path("/autocomplete/descriptions")
+	@Produces({ "application/json" })
+	public Response autocompleteDesc(@QueryParam("text") @Size(min = 4) String text) throws Exception {
+		return Response.ok(accountService.getAutocompleteDesc(text), MediaType.APPLICATION_JSON).build();
+	}
+
+	@PUT
+	@Path("/entry")
+	@Produces({ "application/json" })
+	@Consumes({ "application/json" })
+	public Response autocompleteDesc(Entry entry) throws Exception {
+		accountService.createEntry(entry);
+		return Response.ok(null, MediaType.APPLICATION_JSON).build();
 	}
 
 }

@@ -24,7 +24,7 @@ public class Entry implements Serializable {
 	private static final long serialVersionUID = 3013695847762428440L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 
@@ -42,7 +42,7 @@ public class Entry implements Serializable {
 
 	@NotNull
 	@Column(name = "updated_date")
-	private Date updated_date;
+	private Date updatedDate;
 
 	/**
 	 * @return the id
@@ -105,18 +105,18 @@ public class Entry implements Serializable {
 	}
 
 	/**
-	 * @return the updated_date
+	 * @return the updatedDate
 	 */
-	public Date getUpdated_date() {
-		return updated_date;
+	public Date getUpdatedDate() {
+		return updatedDate;
 	}
 
 	/**
-	 * @param updated_date
-	 *            the updated_date to set
+	 * @param updatedDate
+	 *            the updatedDate to set
 	 */
-	public void setUpdated_date(Date updated_date) {
-		this.updated_date = updated_date;
+	public void setUpdatedDate(Date updatedDate) {
+		this.updatedDate = updatedDate;
 	}
 
 }

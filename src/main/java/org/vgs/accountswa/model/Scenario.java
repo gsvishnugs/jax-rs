@@ -6,10 +6,13 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "scenario")
+@NamedQueries({ @NamedQuery(name = "Scenario.searchForAutocomplete", query = "SELECT s FROM Scenario s WHERE lower(s.transactionName) LIKE :text") })
 public class Scenario implements Serializable {
 
 	/**
