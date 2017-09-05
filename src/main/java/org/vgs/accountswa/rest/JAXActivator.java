@@ -1,4 +1,4 @@
-/*
+/**
  * JBoss, Home of Professional Open Source
  * Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
  * contributors by the @authors tag. See the copyright.txt in the
@@ -14,18 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.as.quickstarts.rshelloworld;
+package org.vgs.accountswa.rest;
 
-/**
- * A simple CDI service which is able to say hello to someone
- *
- * @author Pete Muir
- *
- */
-public class HelloService {
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
 
-    String createHelloMessage(String name) {
-        return "Hello " + name + "!";
-    }
-
+@ApplicationPath("rest")
+public class JAXActivator extends Application {
+    // Left empty intentionally
 }

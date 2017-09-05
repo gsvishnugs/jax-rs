@@ -1,4 +1,4 @@
-/**
+/*
  * JBoss, Home of Professional Open Source
  * Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
  * contributors by the @authors tag. See the copyright.txt in the
@@ -14,17 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.as.quickstarts.rshelloworld;
+package org.vgs.accountswa.rest;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-/**
- * JAXActivator is an arbitrary name, what is important is that javax.ws.rs.core.Application is extended
- * and the @ApplicationPath annotation is used with a "rest" path.  Without this the rest routes linked to
- * from index.html would not be found.
- */
-@ApplicationPath("rest")
-public class JAXActivator extends Application {
-    // Left empty intentionally
+import org.vgs.accountswa.util.AccountService;
+
+@Path("/")
+public class MainRestController {
+
+	@Inject
+	AccountService accountService;
+
+	@GET
+	@Path("/json")
+	@Produces({ "application/json" })
+	public Response getHelloWorldJSON() throws Exception {
+		return Response.ok(accountService.getAllEntries(), MediaType.APPLICATION_JSON).build();
+	}
+
 }
