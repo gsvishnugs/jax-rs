@@ -79,7 +79,7 @@
 				$('div.prog-listing').show();
 				if(this.href.indexOf("#test2") !== -1) {
 					var request = $.ajax({
-        				url: "/accounts-wa/rest/entries",
+        				url: "/rest/entries",
         				type: "GET"
         			});
 		    		request.done(function(response) {
@@ -101,7 +101,7 @@
 		        if(text.length >= 4) {
 		        	$('div.progress').show();
 		        	var request = $.ajax({
-		        				url: "/accounts-wa/rest/autocomplete/descriptions?text=" + text,
+		        				url: "/rest/autocomplete/descriptions?text=" + text,
 		        				type: "GET"
 		        			});
 	        		request.done(function(response) {
@@ -128,7 +128,7 @@
 		    	requestObject.transactionType = $("input[name='tx-type']:checked").val();
 		    	requestObject.amount = $('#icon_prefix').val();
 		    	$.ajax({
-					url: "/accounts-wa/rest/entry",
+					url: "/rest/entry",
 					type: "PUT",
 					data: JSON.stringify(requestObject),
 					dataType: "json",
