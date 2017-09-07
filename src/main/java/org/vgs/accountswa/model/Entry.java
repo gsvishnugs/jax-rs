@@ -11,7 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Table(name = "entry")
@@ -28,19 +32,21 @@ public class Entry implements Serializable {
 	@Column(name = "id")
 	private Long id;
 
-	@NotNull
+	@NotNull(message="Invalid Transaction Name")
+	@NotBlank(message="Invalid Transaction Name")
 	@Column(name = "tx_name")
 	private String transactionName;
 
-	@NotNull
+	@NotNull(message="Invalid Transaction Type(eg: CREDIT)")
+	@NotBlank(message="Invalid Transaction Type(eg: CREDIT)")
 	@Column(name = "tx_type")
 	private String transactionType;
 
-	@NotNull
+	@NotNull(message="Invalid amount")
+	@DecimalMin(value="0.0", message="Invalid amount")
 	@Column(name = "amount")
 	private Double amount;
 
-	@NotNull
 	@Column(name = "updated_date")
 	private Date updatedDate;
 

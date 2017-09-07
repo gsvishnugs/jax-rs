@@ -17,6 +17,7 @@
 package org.vgs.accountswa.rest;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -54,7 +55,7 @@ public class MainRestController {
 	@Path("/entry")
 	@Produces({ "application/json" })
 	@Consumes({ "application/json" })
-	public Response autocompleteDesc(Entry entry) throws Exception {
+	public Response autocompleteDesc(@Valid Entry entry) throws Exception {
 		accountService.createEntry(entry);
 		return Response.ok(null, MediaType.APPLICATION_JSON).build();
 	}

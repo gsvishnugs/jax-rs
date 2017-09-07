@@ -1,227 +1,166 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Accounts Web Application</title>
-	<script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
-	<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	<style>
-		.ac-dw {
-		    overflow: hidden;
-		    z-index: 10002;
-		    font-size: 20px;
-		    width: 398px;
-		    min-width: 398px;
-		    height: auto;
-		    display: block;
-		    transform: translateY(0px);
-		    border-radius: 0 0 2px 2px;
-		    padding: 0.286em 0.4em;
-		    -webkit-tap-highlight-color: rgba(0,0,0,0);
-		    border-width: 1px;
-		    border-style: solid;
-		    color: #444;
-		    background-color: #fff;
-		    border-color: #ebebeb;
-		    box-shadow: 0 2px 2px 0 rgba(0,0,0,.2);
-		    margin: 0;
-		    outline: 0;
-		    text-decoration: none;
-		    list-style: none;
-		    box-sizing: content-box;
-	    }
-	    .ac-list {
-	    	list-style: none;
-	    }
-	    .ac-item {
-	    	margin-bottom: 0.8em;
-    		cursor: pointer;
-   		    font-family: "Roboto","Helvetica","Arial",sans-serif;
-		    font-size: 17px;
-		    line-height: 1;
-		    letter-spacing: .02em;
-		    font-weight: 400;
-	    }
-	</style>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>      
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
-	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-		<header class="mdl-layout__header">
-			<div class="mdl-layout__header-row">
-				<span class="mdl-layout-title">Accounts</span>
-			</div>
-			<div class="mdl-layout__tab-bar mdl-js-ripple-effect">
-				<a href="#scroll-tab-1" class="mdl-layout__tab is-active">Add</a>
-				<a href="#scroll-tab-2" class="mdl-layout__tab">List</a>
-			</div>
-		</header>
-		<main class="mdl-layout__content"> 
-			<section class="mdl-layout__tab-panel is-active" id="scroll-tab-1">
-				<div class="page-content">
-					<form action="#" style="padding-top: 5%;padding-left: 5%;">
-					  <h6>Description</h6>
-					  <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
-					    <label class="mdl-button mdl-js-button mdl-button--icon" for="sample6">
-					      <i class="material-icons">search</i>
-					    </label>
-					    <div id="ac-input" class="mdl-textfield__expandable-holder">
-					      <input class="mdl-textfield__input" type="text" id="sample6">
-					      <label class="mdl-textfield__label" for="sample6">Description</label>
-					    </div>
-					  </div>
-					  <br/>
-					  <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-1">
-						  <input type="radio" id="option-1" class="mdl-radio__button" name="tx-options" value="CREDIT">
-						  <span class="mdl-radio__label">Credit</span>
-					  </label>
-					  <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-2" style="margin-left: 10%;">
-						  <input type="radio" id="option-2" class="mdl-radio__button" name="tx-options" value="DEBIT">
-						  <span class="mdl-radio__label">Debit</span>
-					  </label>
-					  <br/>
-					  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-					    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="sample4">
-					    <label class="mdl-textfield__label" for="sample4">Amount</label>
-					    <span class="mdl-textfield__error">Input is not a number</span>
-					  </div>
-					  <br/>
-					  <button id="demo-show-snackbar" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="button">Save</button>
-					</form>
+	
+	<nav class="nav-extended">
+		<div class="nav-wrapper">
+			<a href="#" class="brand-logo">Accounts</a>
+			<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+		</div>
+		<div class="nav-content">
+			<ul class="tabs tabs-transparent">
+				<li class="tab"><a class="active" href="#test1">Test 1</a></li>
+				<li class="tab"><a href="#test2">Test 2</a></li>
+			</ul>
+		</div>
+	</nav>
+	<div id="test1" class="col s12">
+		<div class="progress" style="margin-top: 0px;">
+		    <div class="indeterminate"></div>
+		</div>
+		<div style="width: 300px; margin-top: 20px;">
+			<div class="col s12">
+				<div class="row">
+					<div class="input-field col s12">
+						<i class="material-icons prefix">description</i>
+						<input type="text" id="autocomplete-input" class="autocomplete">
+						<label id=""for="autocomplete-input">Autocomplete</label>
+						<ul class="autocomplete-content dropdown-content" id="ac-list"></ul>
+					</div>
 				</div>
-			</section> 
-			<section class="mdl-layout__tab-panel" id="scroll-tab-2">
-		    	<div class="page-content">
-		    		<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp" style="width: 100%">
-					  <thead>
-					    <tr>
-					      <th class="mdl-data-table__cell--non-numeric">Description</th>
-					      <th>Type</th>
-					      <th>Amount</th>
-					      <th>Date</th>
-					    </tr>
-					  </thead>
-					  <tbody id="el-tbody">
-					  </tbody>
-					</table>
-		    	</div>
-		    </section>
-		</main>
+			</div>
+		</div>
+        <p style="margin-left: 15px;">
+        	<i class="material-icons prefix" style="margin-top: 10px; font-size: 30px;">swap_vert</i>
+			<input class="with-gap" name="tx-type" type="radio" id="tx-type-debit" value="DEBIT" checked />
+			<label for="tx-type-debit" style="margin-left: 10px;">Debit</label>
+			<input class="with-gap" name="tx-type" type="radio" id="tx-type-credit" value="CREDIT" />
+			<label for="tx-type-credit" style="margin-left: 40px;">Credit</label>
+		</p>
+		<div class="input-field col s6" style="width: 300px; margin-top: 25px; margin-left: 12px;">
+			<i class="material-icons prefix" style="margin-top: 15px;">attach_money</i>
+			<input id="icon_prefix" type="text" class="validate">
+			<label for="icon_prefix">Amount</label>
+        </div>
+        <button id="save-btn" class="btn waves-effect waves-light" type="submit" name="action" style="margin-left: 55px; margin-top: 40px;">Submit
+			<i class="material-icons right">send</i>
+		</button>
 	</div>
-    <div id="demo-snackbar-example" class="mdl-js-snackbar mdl-snackbar">
-      <div class="mdl-snackbar__text"></div>
-      <button class="mdl-snackbar__action" type="button"></button>
-    </div>
-    <script>
+	<div id="test2" class="col s12">
+		<div class="progress prog-listing" style="margin-top: 0px;">
+		    <div class="indeterminate"></div>
+		</div>
+		<table>
+			<thead>
+				<tr>
+					<th>Description</th>
+					<th>Type</th>
+					<th>Amount</th>
+					<th>Date</th>
+				</tr>
+			</thead>
+			<tbody id="listing-content">
+			</tbody>
+	    </table>
+	</div>
+	<script type="text/javascript">
 		$(document).ready(function(){
-			$("a.mdl-layout__tab").click(function() {
-				if(this.href.indexOf("#scroll-tab-2") !== -1) {
+			$('div.progress').hide();
+			$('div.prog-listing').hide();
+			$("a", ".tab").click(function() {
+				$('div.prog-listing').show();
+				if(this.href.indexOf("#test2") !== -1) {
 					var request = $.ajax({
-        				url: "/rest/entries",
+        				url: "/accounts-wa/rest/entries",
         				type: "GET"
         			});
 		    		request.done(function(response) {
-		    			$('#el-tbody').html('');
+		    			$('#listing-content').html('');
 		    			var htmlContent = '';
 		    			$.each(response, function(key,value) {
-		    				htmlContent += '<tr><td><label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-data-table__select mdl-js-ripple-effect--ignore-events is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple"><input type="checkbox" class="mdl-checkbox__input"><span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span></label></td><td class="mdl-data-table__cell--non-numeric">' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td><td>' + new Date(value.updatedDate).toString("yyyy-MM-dd HH:mm:ss") + '</td></tr>';
+		    				htmlContent += '<tr><td>' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td></tr>';
 		    			});
-		    			$('#el-tbody').html(htmlContent);
+		    			$('#listing-content').html(htmlContent);
+		    			$('div.prog-listing').hide();
 		    		});
 		    		request.fail(function(jqXHR, textStatus) {
 		   		    	alert( "Request failed: " + textStatus );
 		        	});	
 				}
 		    });
-		    $("#sample6").keyup(function(){
+			$("input.autocomplete").keyup(function(){
 		    	var text = $(this).val();
 		        if(text.length >= 4) {
+		        	$('div.progress').show();
 		        	var request = $.ajax({
-		        				url: "/rest/autocomplete/descriptions?text=" + text,
+		        				url: "/accounts-wa/rest/autocomplete/descriptions?text=" + text,
 		        				type: "GET"
 		        			});
 	        		request.done(function(response) {
-	        			$('#ac-dw').remove();
-	        			$('#ac-input').after('<div id="ac-dw" class="ac-dw"></div>');
-	        			var htmlContent = '<ul class="ac-list">';
+	        			var htmlContent = '';
 	        			$.each(response, function(key,value) {
-	        				htmlContent += '<li class="ac-item" onclick="populateAutocomplete(\'' + value.transactionName + '\');">' + value.transactionName + '</li>';
+	        				htmlContent += '<li onclick="populateAutocomplete(\'' + value.transactionName + '\')"><span>' + value.transactionName + '</span></li>';
 	        			});
 	        			htmlContent += '</ul>';
-	        			$('#ac-dw').html(htmlContent);
+	        			$('#ac-list').html(htmlContent);
+	        			$('div.progress').hide();
 	        		});
 	        		request.fail(function(jqXHR, textStatus) {
         		    	alert( "Request failed: " + textStatus );
+        		    	$('div.progress').hide();
 		        	});
 		        } else {
-		        	$('#ac-dw').remove();
+		        	$('#ac-list').html('');
 		        }
 		    });
-		    $('#demo-show-snackbar').click(function() {
+			$('#save-btn').click(function() {
+				$('div.progress').show();
 		    	var requestObject = new Object();
-		    	requestObject.transactionName = $('#sample6').val();
-		    	requestObject.transactionType = $("input[name='tx-options']:checked").val();
-		    	requestObject.amount = $('#sample4').val();
+		    	requestObject.transactionName = $('#autocomplete-input').val();
+		    	requestObject.transactionType = $("input[name='tx-type']:checked").val();
+		    	requestObject.amount = $('#icon_prefix').val();
 		    	$.ajax({
-    				url: "/rest/entry",
-    				type: "PUT",
-    				data: JSON.stringify(requestObject),
-       				dataType: "json",
-       				contentType: "application/json",
-       				statusCode: {
-       			      200: function (response) {
-       			    	var snackbarContainer = document.querySelector('#demo-snackbar-example');
-    					var handler = function(event) {};
-    					var data = {
-    						      		message: "Data Saved",
-    						      		timeout: 2000,
-    						      		actionHandler: handler,
-    						      		actionText: 'OK'
-    						       };
-    				    snackbarContainer.MaterialSnackbar.showSnackbar(data);
-       			      },
-       			      400: function (response) {
-       			    	var snackbarContainer = document.querySelector('#demo-snackbar-example');
-    					var handler = function(event) {};
-    					var data = {
-    						      		message: "Invalid Request. Check and try again",
-    						      		timeout: 2000,
-    						      		actionHandler: handler,
-    						      		actionText: 'OK'
-    						       };
-    				    snackbarContainer.MaterialSnackbar.showSnackbar(data);
-       			      },
-       			      404: function (response) {
-       			    	var snackbarContainer = document.querySelector('#demo-snackbar-example');
-    					var handler = function(event) {};
-    					var data = {
-    						      		message: "Service unavailable",
-    						      		timeout: 2000,
-    						      		actionHandler: handler,
-    						      		actionText: 'OK'
-    						       };
-    				    snackbarContainer.MaterialSnackbar.showSnackbar(data);
-       			      }
-       			   }, 
-       			   success: function () {
-       				var snackbarContainer = document.querySelector('#demo-snackbar-example');
-					var handler = function(event) {};
-					var data = {
-						      		message: "Data Saved",
-						      		timeout: 2000,
-						      		actionHandler: handler,
-						      		actionText: 'OK'
-						       };
-				    snackbarContainer.MaterialSnackbar.showSnackbar(data);
-       			   }
+					url: "/accounts-wa/rest/entry",
+					type: "PUT",
+					data: JSON.stringify(requestObject),
+					dataType: "json",
+					contentType: "application/json",
+					statusCode: {
+				        200: function (response) {
+				        	$('div.progress').hide();
+				        	Materialize.toast('Data Saved', 4000);
+				        },
+				        400: function (response) {
+							$('div.progress').hide();
+				        	Materialize.toast(response.responseJSON.message, 4000);
+				        },
+				        404: function (response) {
+		    				$('div.progress').hide();
+				        	Materialize.toast('Service unavailable. Try after some time.', 4000);
+				      	},
+				      	503: function(response) {
+							$('div.progress').hide();
+				        	Materialize.toast("Internal wiring just crashed. Let us fix it :)", 4000);
+				      	}
+					},
+					success: function () {
+						$('div.progress').hide();
+			        	Materialize.toast('Data Saved', 4000);
+				    }
     			});
 		    });
 		});
 		function populateAutocomplete(text) {
-	    	$('#sample6').val(text);
-	    	$('#ac-dw').remove();
+	    	$('#autocomplete-input').val(text);
+	    	$('#ac-list').html('');
 		}
 	</script>
 </body>
