@@ -7,6 +7,7 @@ var filesToCache = [
   '/js/app.js',
   '/js/materialize.min.js',
   '/js/jquery-3.2.1.min.js',
+  '/js/date.min.js',
   '/css/icon.css',
   '/css/materialize.min.css',
   '/fonts/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2',
@@ -18,7 +19,10 @@ var filesToCache = [
   '/images/launcher-icon-1x.png',
   '/images/launcher-icon-2x.png',
   '/images/launcher-icon-3x.png',
-  "/images/favicon.ico"
+  "/images/favicon.ico",
+  "/images/item-online.png",
+  "/images/item-offline.png",
+  "/images/item-not-synced.png"
 ];
 
 self.addEventListener('install', function(e) {

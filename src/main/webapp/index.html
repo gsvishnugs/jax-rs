@@ -12,7 +12,17 @@
 	<link href="css/icon.css" rel="stylesheet">
     <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
     <script src="js/materialize.min.js"></script>  
-    <script src="js/app.js"></script>    
+    <script src="js/app.js"></script>  
+    <script src="js/date.min.js"></script>
+    <style type="text/css">
+    	.status_icon {
+		    width: 20px;
+		    height: 17px;
+		    margin-right: 10px;
+		    margin-bottom: -3px;
+    	}
+    
+    </style>
 </head>
 <body>
 	<input type="hidden" id="network-status" value="ONLINE" />
@@ -84,9 +94,11 @@
 		  function updateOnlineStatus(event) {
 		    if (navigator.onLine) {
 		    	$('#network-status').val("ONLINE");
+		    	populateEntriesListingPage();
 		    	Materialize.toast("App is now online", 4000);
 		    } else {
 		    	$('#network-status').val("OFFLINE");
+		    	populateEntriesListingPage();
 		    	Materialize.toast("App just went offline", 4000);
 		    }
 		  }
@@ -107,6 +119,9 @@
 	        	            crossDomain: true,
 	        			});
 			    		request.done(function(response) {
+			    			response.forEach(function(element) {
+			    			    element.synced = true;
+			    			});
 			    			localStorage.accountEntries = JSON.stringify(response);
 			    			populateEntriesListingPage();
 			    		});
@@ -190,11 +205,25 @@
 			$('#listing-content').html('');
 			var htmlContent = '';
 			$.each(JSON.parse(localStorage.accountEntries), function(key,value) {
-				htmlContent += '<tr><td>' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td></tr>';
+				var img_status = '', img_title = '';
+				if($('#network-status').val() === "ONLINE" && value.synced) {
+					img_status = 'images/item-online.png';
+					img_title = 'Data served online';
+				} else if($('#network-status').val() === "ONLINE" && !value.synced) {
+					img_status = 'images/item-not-synced.png';
+					img_title = 'Data served from local storage(Not Synced)';
+				} else {
+					img_status = 'images/item-offline.png';
+					img_title = 'Data served from local storage(Synced)';
+				}
+				htmlContent += '<tr><td><img src="' + img_status + '" class="status_icon" title="' + img_title + '"/>' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td><td>' + new Date(value.updatedDate).toString("yyyy-MM-dd HH:mm:ss") + '</td></tr>';
 			});
 			$('#listing-content').html(htmlContent);
 			$('div.prog-listing').hide();
 		}
 	</script>
+	<img src="images/item-not-synced.png" style="display: none;" />
+	<img src="images/item-offline.png" style="display: none;" />
+	<img src="images/item-online.png" style="display: none;" />
 </body>
 </html>
