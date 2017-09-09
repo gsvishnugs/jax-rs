@@ -210,7 +210,11 @@
 		function populateEntriesListingPage() {
 			$('#listing-content').html('');
 			var htmlContent = '';
-			$.each(JSON.parse(localStorage.accountEntries), function(key,value) {
+			var storedData = JSON.parse(localStorage.accountEntries);
+			storedData.sort(function(a,b){
+				return new Date(b.updatedDate) - new Date(a.updatedDate);
+			});
+			$.each(storedData, function(key,value) {
 				var img_status = '', img_title = '';
 				if($('#network-status').val() === "ONLINE" && (value.id != null || value.id != undefined)) {
 					img_status = 'images/item-online.png';
