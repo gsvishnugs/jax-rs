@@ -119,9 +119,6 @@
 	        	            crossDomain: true,
 	        			});
 			    		request.done(function(response) {
-			    			response.forEach(function(element) {
-			    			    element.synced = true;
-			    			});
 			    			localStorage.accountEntries = JSON.stringify(response);
 			    			populateEntriesListingPage();
 			    		});
@@ -165,36 +162,45 @@
 		    	requestObject.transactionName = $('#autocomplete-input').val();
 		    	requestObject.transactionType = $("input[name='tx-type']:checked").val();
 		    	requestObject.amount = $('#icon_prefix').val();
-		    	$.ajax({
-					url: baseUrl + "/rest/entry",
-					type: "PUT",
-					data: JSON.stringify(requestObject),
-					dataType: "json",
-					contentType: "application/json",
-		            crossDomain: true,
-					statusCode: {
-				        200: function (response) {
-				        	$('div.progress').hide();
+		    	requestObject.updatedDate = new Date().toString("yyyy-MM-dd HH:mm:ss");
+		    	requestObject.id = null;
+		    	if($('#network-status').val() === "ONLINE") {
+			    	$.ajax({
+						url: baseUrl + "/rest/entry",
+						type: "PUT",
+						data: JSON.stringify(requestObject),
+						dataType: "json",
+						contentType: "application/json",
+			            crossDomain: true,
+						statusCode: {
+					        200: function (response) {
+					        	$('div.progress').hide();
+					        	Materialize.toast('Data Saved', 4000);
+					        },
+					        400: function (response) {
+								$('div.progress').hide();
+					        	Materialize.toast(response.responseJSON.message, 4000);
+					        },
+					        404: function (response) {
+			    				$('div.progress').hide();
+					        	Materialize.toast('Service unavailable. Try after some time.', 4000);
+					      	},
+					      	503: function(response) {
+								$('div.progress').hide();
+					        	Materialize.toast("Internal wiring just crashed. Let us fix it :)", 4000);
+					      	}
+						},
+						success: function () {
+							$('div.progress').hide();
 				        	Materialize.toast('Data Saved', 4000);
-				        },
-				        400: function (response) {
-							$('div.progress').hide();
-				        	Materialize.toast(response.responseJSON.message, 4000);
-				        },
-				        404: function (response) {
-		    				$('div.progress').hide();
-				        	Materialize.toast('Service unavailable. Try after some time.', 4000);
-				      	},
-				      	503: function(response) {
-							$('div.progress').hide();
-				        	Materialize.toast("Internal wiring just crashed. Let us fix it :)", 4000);
-				      	}
-					},
-					success: function () {
-						$('div.progress').hide();
-			        	Materialize.toast('Data Saved', 4000);
-				    }
-    			});
+					    }
+	    			});
+		    	} else{
+		    		var storedData = JSON.parse(localStorage.accountEntries);
+		    		storedData.push(requestObject);
+		    		localStorage.accountEntries = JSON.stringify(storedData);
+		    		Materialize.toast("Data saved locally. Will sync once app is connected to internet", 4000);
+		    	}
 		    });
 		});
 		function populateAutocomplete(text) {
@@ -206,10 +212,10 @@
 			var htmlContent = '';
 			$.each(JSON.parse(localStorage.accountEntries), function(key,value) {
 				var img_status = '', img_title = '';
-				if($('#network-status').val() === "ONLINE" && value.synced) {
+				if($('#network-status').val() === "ONLINE" && (value.id != null || value.id != undefined)) {
 					img_status = 'images/item-online.png';
 					img_title = 'Data served online';
-				} else if($('#network-status').val() === "ONLINE" && !value.synced) {
+				} else if($('#network-status').val() === "ONLINE" && (value.id == null || value.id === undefined)) {
 					img_status = 'images/item-not-synced.png';
 					img_title = 'Data served from local storage(Not Synced)';
 				} else {
