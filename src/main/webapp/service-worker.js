@@ -3,6 +3,7 @@ var cacheName = 'accounts-wa-c1';
 var filesToCache = [
   '/',
   '/index.html',
+  '/manifest.json',
   '/js/app.js',
   '/js/materialize.min.js',
   '/js/jquery-3.2.1.min.js',
@@ -16,7 +17,8 @@ var filesToCache = [
   '/fonts/roboto/Roboto-Thin.woff2',
   '/images/launcher-icon-1x.png',
   '/images/launcher-icon-2x.png',
-  '/images/launcher-icon-3x.png'
+  '/images/launcher-icon-3x.png',
+  "/images/favicon.ico"
 ];
 
 self.addEventListener('install', function(e) {

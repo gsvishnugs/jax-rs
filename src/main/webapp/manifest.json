@@ -3,20 +3,27 @@
   "name": "Accounts Web Application",
   "icons": [
     {
-      "src": "launcher-icon-1x.png",
+      "src": "images/launcher-icon-1x.png",
       "type": "image/png",
       "sizes": "64x64"
     },
     {
-      "src": "launcher-icon-2x.png",
+      "src": "images/launcher-icon-1-5x.png",
+      "type": "image/png",
+      "sizes": "144x144"
+    },
+    {
+      "src": "images/launcher-icon-2x.png",
       "type": "image/png",
       "sizes": "128x128"
     },
     {
-      "src": "launcher-icon-4x.png",
+      "src": "images/launcher-icon-4x.png",
       "type": "image/png",
       "sizes": "256x256"
     }
   ],
-  "start_url": "index.html?launcher=true"
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ee6e73"
 }
