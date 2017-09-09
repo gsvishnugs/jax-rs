@@ -239,10 +239,12 @@
 			return storedData;
 		}
 		function putDataToLocalStorage(data) {
-			localStorage.accountEntries = JSON.stringify(data);
+			if(data != undefined) {
+				localStorage.accountEntries = JSON.stringify(data);
+			}
 		}
 		function isOnline() {
-			boolean status = false;
+			var status = false;
 			if($('#network-status').val() === "ONLINE") {
 				status = true;
 			}
