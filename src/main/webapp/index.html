@@ -78,7 +78,7 @@
 	    </table>
 	</div>
 	<script type="text/javascript">
-		var baseUrl = '/';
+		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
 		$(document).ready(function(){
 			$('div.progress').hide();
 			$('div.prog-listing').hide();
@@ -100,7 +100,7 @@
 		    			$('div.prog-listing').hide();
 		    		});
 		    		request.fail(function(jqXHR, textStatus) {
-		   		    	alert( "Request failed: " + textStatus );
+		    			Materialize.toast(textStatus, 4000);
 		        	});	
 				}
 		    });
