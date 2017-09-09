@@ -1,5 +1,5 @@
-var dataCacheName = 'accounts-wa-v1';
-var cacheName = 'accounts-wa-c1';
+var dataCacheName = 'accounts-wa-v2';
+var cacheName = 'accounts-wa-c2';
 var filesToCache = [
   '/',
   '/index.html',
