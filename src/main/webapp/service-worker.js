@@ -13,7 +13,10 @@ var filesToCache = [
   '/fonts/roboto/Roboto-Light.woff2',
   '/fonts/roboto/Roboto-Medium.woff2',
   '/fonts/roboto/Roboto-Regular.woff2',
-  '/fonts/roboto/Roboto-Thin.woff2'
+  '/fonts/roboto/Roboto-Thin.woff2',
+  '/images/launcher-icon-1x.png',
+  '/images/launcher-icon-2x.png',
+  '/images/launcher-icon-3x.png'
 ];
 
 self.addEventListener('install', function(e) {
