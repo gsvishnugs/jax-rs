@@ -15,7 +15,7 @@
     <script src="js/app.js"></script>    
 </head>
 <body>
-	
+	<input type="hidden" id="network-status" value="ONLINE" />
 	<nav class="nav-extended">
 		<div class="nav-wrapper">
 			<a href="#" class="brand-logo">Accounts</a>
@@ -78,30 +78,44 @@
 	    </table>
 	</div>
 	<script type="text/javascript">
-		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
+// 		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
+		var baseUrl = 'http://localhost:80';
+		window.addEventListener('load', function() {
+		  function updateOnlineStatus(event) {
+		    if (navigator.onLine) {
+		    	$('#network-status').val("ONLINE");
+		    	Materialize.toast("App is now online", 4000);
+		    } else {
+		    	$('#network-status').val("OFFLINE");
+		    	Materialize.toast("App just went offline", 4000);
+		    }
+		  }
+		
+		  window.addEventListener('online', updateOnlineStatus);
+		  window.addEventListener('offline', updateOnlineStatus);
+		});
 		$(document).ready(function(){
 			$('div.progress').hide();
 			$('div.prog-listing').hide();
 			$("a", ".tab").click(function() {
 				$('div.prog-listing').show();
 				if(this.href.indexOf("#test2") !== -1) {
-					var request = $.ajax({
-        				url: baseUrl + "/rest/entries",
-        				type: "GET",
-        	            crossDomain: true,
-        			});
-		    		request.done(function(response) {
-		    			$('#listing-content').html('');
-		    			var htmlContent = '';
-		    			$.each(response, function(key,value) {
-		    				htmlContent += '<tr><td>' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td></tr>';
-		    			});
-		    			$('#listing-content').html(htmlContent);
-		    			$('div.prog-listing').hide();
-		    		});
-		    		request.fail(function(jqXHR, textStatus) {
-		    			Materialize.toast(textStatus, 4000);
-		        	});	
+					if($('#network-status').val() === "ONLINE") {
+						var request = $.ajax({
+	        				url: baseUrl + "/rest/entries",
+	        				type: "GET",
+	        	            crossDomain: true,
+	        			});
+			    		request.done(function(response) {
+			    			localStorage.accountEntries = JSON.stringify(response);
+			    			populateEntriesListingPage();
+			    		});
+			    		request.fail(function(jqXHR, textStatus) {
+			    			Materialize.toast(textStatus, 4000);
+			        	});	
+					} else {
+						populateEntriesListingPage();
+					}
 				}
 		    });
 			$("input.autocomplete").keyup(function(){
@@ -171,6 +185,15 @@
 		function populateAutocomplete(text) {
 	    	$('#autocomplete-input').val(text);
 	    	$('#ac-list').html('');
+		}
+		function populateEntriesListingPage() {
+			$('#listing-content').html('');
+			var htmlContent = '';
+			$.each(JSON.parse(localStorage.accountEntries), function(key,value) {
+				htmlContent += '<tr><td>' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td></tr>';
+			});
+			$('#listing-content').html(htmlContent);
+			$('div.prog-listing').hide();
 		}
 	</script>
 </body>
