@@ -112,14 +112,14 @@
 			$("a", ".tab").click(function() {
 				$('div.prog-listing').show();
 				if(this.href.indexOf("#test2") !== -1) {
-					if($('#network-status').val() === "ONLINE") {
+					if(isOnline()) {
 						var request = $.ajax({
 	        				url: baseUrl + "/rest/entries",
 	        				type: "GET",
 	        	            crossDomain: true,
 	        			});
 			    		request.done(function(response) {
-			    			localStorage.accountEntries = JSON.stringify(response);
+			    			putDataToLocalStorage(response);
 			    			populateEntriesListingPage();
 			    		});
 			    		request.fail(function(jqXHR, textStatus) {
@@ -164,7 +164,7 @@
 		    	requestObject.amount = $('#icon_prefix').val();
 		    	requestObject.updatedDate = new Date().toString("yyyy-MM-dd HH:mm:ss");
 		    	requestObject.id = null;
-		    	if($('#network-status').val() === "ONLINE") {
+		    	if(isOnline()) {
 			    	$.ajax({
 						url: baseUrl + "/rest/entry",
 						type: "PUT",
@@ -196,9 +196,9 @@
 					    }
 	    			});
 		    	} else{
-		    		var storedData = JSON.parse(localStorage.accountEntries);
+		    		var storedData = getDataFromLocalStorage();
 		    		storedData.push(requestObject);
-		    		localStorage.accountEntries = JSON.stringify(storedData);
+		    		putDataToLocalStorage(storedData);
 		    		Materialize.toast("Data saved locally. Will sync once app is connected to internet", 4000);
 		    	}
 		    });
@@ -210,16 +210,13 @@
 		function populateEntriesListingPage() {
 			$('#listing-content').html('');
 			var htmlContent = '';
-			var storedData = JSON.parse(localStorage.accountEntries);
-			storedData.sort(function(a,b){
-				return new Date(b.updatedDate) - new Date(a.updatedDate);
-			});
+			var storedData = getDataFromLocalStorage();
 			$.each(storedData, function(key,value) {
 				var img_status = '', img_title = '';
-				if($('#network-status').val() === "ONLINE" && (value.id != null || value.id != undefined)) {
+				if(isOnline() && (value.id != null || value.id != undefined)) {
 					img_status = 'images/item-online.png';
 					img_title = 'Data served online';
-				} else if($('#network-status').val() === "ONLINE" && (value.id == null || value.id === undefined)) {
+				} else if(isOnline() === "ONLINE" && (value.id == null || value.id === undefined)) {
 					img_status = 'images/item-not-synced.png';
 					img_title = 'Data served from local storage(Not Synced)';
 				} else {
@@ -230,6 +227,26 @@
 			});
 			$('#listing-content').html(htmlContent);
 			$('div.prog-listing').hide();
+		}
+		function getDataFromLocalStorage() {
+			var storedData = [];
+			if(localStorage.accountEntries != undefined) {
+				storedData = JSON.parse(localStorage.accountEntries);
+			}
+			storedData.sort(function(a,b){
+				return new Date(b.updatedDate) - new Date(a.updatedDate);
+			});
+			return storedData;
+		}
+		function putDataToLocalStorage(data) {
+			localStorage.accountEntries = JSON.stringify(data);
+		}
+		function isOnline() {
+			boolean status = false;
+			if($('#network-status').val() === "ONLINE") {
+				status = true;
+			}
+			return status;
 		}
 	</script>
 	<img src="images/item-not-synced.png" style="display: none;" />
