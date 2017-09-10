@@ -243,8 +243,16 @@
 			});
 			return storedData;
 		}
-		function putDataToLocalStorage(data) {
+		function putDataToLocalStorage(data, removeSyncedEntries) {
 			var storedData = getDataFromLocalStorage();
+			if(removeSyncedEntries) {
+	        	for(var i = 0; i < storedData.length; i++) {
+	        		if(storedData[i].id === null || storedData[i].id === undefined 
+	        				|| storedData[i].id === 'null' || storedData[i].id === 'undefined') {
+	        			storedData.splice(i, 1);
+	        		}
+	        	}
+			}
 			if(data != undefined && data != 'undefined' && data != null && data != 'null' && data.length > 0) {
 				storedData.push.apply(storedData, data);
 				localStorage.accountEntries = JSON.stringify(storedData);
