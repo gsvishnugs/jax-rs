@@ -28,7 +28,7 @@
 	<input type="hidden" id="network-status" value="ONLINE" />
 	<nav class="nav-extended">
 		<div class="nav-wrapper">
-			<a href="#" class="brand-logo">Accounts</a>
+			<a href="#" class="brand-logo" style="margin-left: 20px;">Accounts</a>
 			<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
 		</div>
 		<div class="nav-content">
@@ -88,15 +88,14 @@
 	    </table>
 	</div>
 	<script type="text/javascript">
-		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
-// 		var baseUrl = 'http://localhost:80';
+// 		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
+		var baseUrl = 'http://localhost:80';
 		window.addEventListener('load', function() {
 		  function updateOnlineStatus(event) {
 		    if (navigator.onLine) {
 		    	$('#network-status').val("ONLINE");
 		    	Materialize.toast("App is now online", 4000);
 		    	syncLocalData();
-		    	populateEntriesListingPage();
 		    } else {
 		    	$('#network-status').val("OFFLINE");
 		    	populateEntriesListingPage();
@@ -120,7 +119,7 @@
 	        	            crossDomain: true,
 	        			});
 			    		request.done(function(response) {
-			    			putDataToLocalStorage(response);
+			    			persistRemoteData(response);
 			    			populateEntriesListingPage();
 			    		});
 			    		request.fail(function(jqXHR, textStatus) {
@@ -150,7 +149,6 @@
 	        			$('div.progress').hide();
 	        		});
 	        		request.fail(function(jqXHR, textStatus) {
-        		    	alert( "Request failed: " + textStatus );
         		    	$('div.progress').hide();
 		        	});
 		        } else {
@@ -197,9 +195,8 @@
 					    }
 	    			});
 		    	} else{
-		    		var storedData = getDataFromLocalStorage();
-		    		storedData.push(requestObject);
-		    		putDataToLocalStorage(storedData);
+		    		$('div.progress').hide();
+		    		persistLocalData(requestObject);
 		    		Materialize.toast("Data saved locally. Will sync once app is connected to internet", 4000);
 		    	}
 		    });
@@ -211,51 +208,61 @@
 		function populateEntriesListingPage() {
 			$('#listing-content').html('');
 			var htmlContent = '';
-			var storedData = getDataFromLocalStorage();
-			$.each(storedData, function(key,value) {
+			var onlineDataList = getOnlineData();
+			var offlineDataList = getLocalData();
+			onlineDataList.push.apply(onlineDataList, offlineDataList);
+			onlineDataList.sort(function(a,b){
+				return new Date(b.updatedDate) - new Date(a.updatedDate);
+			});
+			$.each(onlineDataList, function(key,value) {
 				var img_status = '', img_title = '';
 				if(isOnline() && (value.id != null || value.id != undefined)) {
 					img_status = 'images/item-online.png';
 					img_title = 'Data served online';
-				} else if(isOnline() === "ONLINE" && (value.id == null || value.id === undefined)) {
+				} else if(value.id == null || value.id === undefined) {
 					img_status = 'images/item-not-synced.png';
 					img_title = 'Data served from local storage(Not Synced)';
 				} else {
 					img_status = 'images/item-offline.png';
 					img_title = 'Data served from local storage(Synced)';
 				}
-				htmlContent += '<tr><td><img src="' + img_status + '" class="status_icon" title="' + img_title + '"/>' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td><td>' + convertDateToLocal(value.updatedDate).toString("yyyy-MM-dd HH:mm:ss") + '</td></tr>';
+				htmlContent += '<tr><td><img src="' + img_status + '" class="status_icon" title="' + img_title + '"/>' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td><td>' + new Date(convertDateToLocal(value.updatedDate)).toString("yyyy-MM-dd HH:mm:ss") + '</td></tr>';
 			});
 			$('#listing-content').html(htmlContent);
 			$('div.prog-listing').hide();
 		}
-		function getDataFromLocalStorage() {
-			var storedData = [];
-			if(localStorage.accountEntries != undefined 
-					&& localStorage.accountEntries != 'undefined' 
-					&& localStorage.accountEntries != null 
-					&& localStorage.accountEntries != 'null' 
-					&& localStorage.accountEntries.length > 0) {
-				storedData = JSON.parse(localStorage.accountEntries);
+		function getOnlineData() {
+			var storedDataList = [];
+			if(localStorage.onlineAccountEntries != undefined 
+					&& localStorage.onlineAccountEntries != 'undefined' 
+					&& localStorage.onlineAccountEntries != null 
+					&& localStorage.onlineAccountEntries != 'null' 
+					&& localStorage.onlineAccountEntries.length > 0) {
+				storedDataList = JSON.parse(localStorage.onlineAccountEntries);
 			}
-			storedData.sort(function(a,b){
-				return new Date(b.updatedDate) - new Date(a.updatedDate);
-			});
-			return storedData;
+			return storedDataList;
 		}
-		function putDataToLocalStorage(data, removeSyncedEntries) {
-			var storedData = getDataFromLocalStorage();
-			if(removeSyncedEntries) {
-	        	for(var i = 0; i < storedData.length; i++) {
-	        		if(storedData[i].id === null || storedData[i].id === undefined 
-	        				|| storedData[i].id === 'null' || storedData[i].id === 'undefined') {
-	        			storedData.splice(i, 1);
-	        		}
-	        	}
+		function getLocalData() {
+			var storedDataList = [];
+			if(localStorage.offlineAccountEntries != undefined 
+					&& localStorage.offlineAccountEntries != 'undefined' 
+					&& localStorage.offlineAccountEntries != null 
+					&& localStorage.offlineAccountEntries != 'null' 
+					&& localStorage.offlineAccountEntries.length > 0) {
+				storedDataList = JSON.parse(localStorage.offlineAccountEntries);
 			}
-			if(data != undefined && data != 'undefined' && data != null && data != 'null' && data.length > 0) {
-				storedData.push.apply(storedData, data);
-				localStorage.accountEntries = JSON.stringify(storedData);
+			return storedDataList;
+		}
+		function persistRemoteData(dataList) {
+			if(dataList != undefined && dataList != 'undefined' && dataList != null && dataList != 'null' && dataList.length > 0) {
+				localStorage.onlineAccountEntries = JSON.stringify(dataList);
+			}
+		}
+		function persistLocalData(data) {
+			var localDataList = getLocalData();
+			if(data != undefined && data != 'undefined' && data != null && data != 'null') {
+				localDataList.push(data);
+				localStorage.offlineAccountEntries = JSON.stringify(localDataList);
 			}
 		}
 		function isOnline() {
@@ -265,10 +272,22 @@
 			}
 			return status;
 		}
+		function removeLocalData(data) {
+			var localDataList = getLocalData();
+        	for(var i = 0; i < localDataList.length; i++) {
+        		if(localDataList[i].transactionName === data.transactionName 
+        				&& localDataList[i].transactionType === data.transactionType
+        				&& localDataList[i].amount === data.amount
+        				&& localDataList[i].updatedDate === data.updatedDate) {
+        			localDataList.splice(i, 1);
+        		}
+        	}
+        	localStorage.offlineAccountEntries = JSON.stringify(localDataList);
+		}
 		function syncLocalData() {
-			var storedData = getDataFromLocalStorage();
+			var localDataList = getLocalData();
 			var updateCount = 0;
-			$.each(storedData, function(key,value) {
+			$.each(localDataList, function(key,value) {
 				if(value.id == undefined || value.id == null) {
 					$.ajax({
 						url: baseUrl + "/rest/entry",
@@ -280,17 +299,9 @@
 						statusCode: {
 					        200: function (response) {
 					        	updateCount++;
-					        	Materialize.toast('Synced Rs.' + value.amount + ' ' + value.transactionType + ' transaction with name ' + value.transactionName + '.', 4000);
-					        	var refreshedLSData = getDataFromLocalStorage();
-					        	for(var i = 0; i < refreshedLSData.length; i++) {
-					        		if(refreshedLSData[i].transactionName === value.transactionName 
-					        				&& refreshedLSData[i].transactionType === value.transactionType
-					        				&& refreshedLSData[i].amount === value.amount
-					        				&& refreshedLSData[i].updatedDate === value.updatedDate) {
-					        			refreshedLSData.splice(i, 1);
-					        		}
-					        	}
-					        	localStorage.accountEntries = JSON.stringify(refreshedLSData);
+					        	Materialize.toast('Synced Rs.' + value.amount + ' ' + value.transactionType + ' transaction for ' + value.transactionName + '.', 4000);
+					        	removeLocalData(value);
+					        	populateEntriesListingPage();
 					        },
 					        400: function (response) {
 					        },
@@ -301,17 +312,9 @@
 						},
 						success: function () {
 				        	updateCount++;
-				        	Materialize.toast('Synced Rs.' + value.amount + ' ' + value.transactionType + ' transaction with name ' + value.transactionName + '.', 4000);
-				        	var refreshedLSData = getDataFromLocalStorage();
-				        	for(var i = 0; i < refreshedLSData.length; i++) {
-				        		if(refreshedLSData[i].transactionName === value.transactionName 
-				        				&& refreshedLSData[i].transactionType === value.transactionType
-				        				&& refreshedLSData[i].amount === value.amount
-				        				&& refreshedLSData[i].updatedDate === value.updatedDate) {
-				        			refreshedLSData.splice(i, 1);
-				        		}
-				        	}
-				        	localStorage.accountEntries = JSON.stringify(refreshedLSData);
+				        	Materialize.toast('Synced Rs.' + value.amount + ' ' + value.transactionType + ' transaction for ' + value.transactionName + '.', 4000);
+				        	removeLocalData(value);
+				        	populateEntriesListingPage();
 					    }
 	    			});
 				}
