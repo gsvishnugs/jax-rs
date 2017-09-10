@@ -1,6 +1,5 @@
 package org.vgs.accountswa.util;
 
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -9,6 +8,8 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.vgs.accountswa.model.Entry;
 import org.vgs.accountswa.model.Scenario;
 
@@ -31,7 +32,9 @@ public class AccountService {
 	}
 
 	public void createEntry(Entry entry) {
-		entry.setUpdatedDate(new Date());
+		if (entry.getUpdatedDate() != null) {
+			entry.setUpdatedDate(new DateTime(DateTimeZone.UTC).toLocalDateTime().toDate());
+		}
 		em.persist(entry);
 	}
 

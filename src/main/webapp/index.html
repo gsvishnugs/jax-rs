@@ -88,14 +88,15 @@
 	    </table>
 	</div>
 	<script type="text/javascript">
-		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
-// 		var baseUrl = 'http://localhost:80';
+// 		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
+		var baseUrl = 'http://localhost:80';
 		window.addEventListener('load', function() {
 		  function updateOnlineStatus(event) {
 		    if (navigator.onLine) {
 		    	$('#network-status').val("ONLINE");
-		    	populateEntriesListingPage();
 		    	Materialize.toast("App is now online", 4000);
+		    	syncLocalData();
+		    	populateEntriesListingPage();
 		    } else {
 		    	$('#network-status').val("OFFLINE");
 		    	populateEntriesListingPage();
@@ -162,7 +163,7 @@
 		    	requestObject.transactionName = $('#autocomplete-input').val();
 		    	requestObject.transactionType = $("input[name='tx-type']:checked").val();
 		    	requestObject.amount = $('#icon_prefix').val();
-		    	requestObject.updatedDate = new Date().toString("yyyy-MM-dd HH:mm:ss");
+		    	requestObject.updatedDate = convertDateToUTC(new Date()).toString("yyyy-MM-dd HH:mm:ss");
 		    	requestObject.id = null;
 		    	if(isOnline()) {
 			    	$.ajax({
@@ -223,14 +224,18 @@
 					img_status = 'images/item-offline.png';
 					img_title = 'Data served from local storage(Synced)';
 				}
-				htmlContent += '<tr><td><img src="' + img_status + '" class="status_icon" title="' + img_title + '"/>' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td><td>' + new Date(value.updatedDate).toString("yyyy-MM-dd HH:mm:ss") + '</td></tr>';
+				htmlContent += '<tr><td><img src="' + img_status + '" class="status_icon" title="' + img_title + '"/>' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td><td>' + convertDateToLocal(value.updatedDate).toString("yyyy-MM-dd HH:mm:ss") + '</td></tr>';
 			});
 			$('#listing-content').html(htmlContent);
 			$('div.prog-listing').hide();
 		}
 		function getDataFromLocalStorage() {
 			var storedData = [];
-			if(localStorage.accountEntries != undefined) {
+			if(localStorage.accountEntries != undefined 
+					&& localStorage.accountEntries != 'undefined' 
+					&& localStorage.accountEntries != null 
+					&& localStorage.accountEntries != 'null' 
+					&& localStorage.accountEntries.length > 0) {
 				storedData = JSON.parse(localStorage.accountEntries);
 			}
 			storedData.sort(function(a,b){
@@ -239,8 +244,10 @@
 			return storedData;
 		}
 		function putDataToLocalStorage(data) {
-			if(data != undefined) {
-				localStorage.accountEntries = JSON.stringify(data);
+			var storedData = getDataFromLocalStorage();
+			if(data != undefined && data != 'undefined' && data != null && data != 'null' && data.length > 0) {
+				storedData.push.apply(storedData, data);
+				localStorage.accountEntries = JSON.stringify(storedData);
 			}
 		}
 		function isOnline() {
@@ -249,6 +256,69 @@
 				status = true;
 			}
 			return status;
+		}
+		function syncLocalData() {
+			var storedData = getDataFromLocalStorage();
+			var updateCount = 0;
+			$.each(storedData, function(key,value) {
+				if(value.id == undefined || value.id == null) {
+					$.ajax({
+						url: baseUrl + "/rest/entry",
+						type: "PUT",
+						data: JSON.stringify(value),
+						dataType: "json",
+						contentType: "application/json",
+			            crossDomain: true,
+						statusCode: {
+					        200: function (response) {
+					        	updateCount++;
+					        	Materialize.toast('Synced Rs.' + value.amount + ' ' + value.transactionType + ' transaction with name ' + value.transactionName + '.', 4000);
+					        	var refreshedLSData = getDataFromLocalStorage();
+					        	for(var i = 0; i < refreshedLSData.length; i++) {
+					        		if(refreshedLSData[i].transactionName === value.transactionName 
+					        				&& refreshedLSData[i].transactionType === value.transactionType
+					        				&& refreshedLSData[i].amount === value.amount
+					        				&& refreshedLSData[i].updatedDate === value.updatedDate) {
+					        			refreshedLSData.splice(i, 1);
+					        		}
+					        	}
+					        	localStorage.accountEntries = JSON.stringify(refreshedLSData);
+					        },
+					        400: function (response) {
+					        },
+					        404: function (response) {
+					      	},
+					      	503: function(response) {
+					      	}
+						},
+						success: function () {
+				        	updateCount++;
+				        	Materialize.toast('Synced Rs.' + value.amount + ' ' + value.transactionType + ' transaction with name ' + value.transactionName + '.', 4000);
+				        	var refreshedLSData = getDataFromLocalStorage();
+				        	for(var i = 0; i < refreshedLSData.length; i++) {
+				        		if(refreshedLSData[i].transactionName === value.transactionName 
+				        				&& refreshedLSData[i].transactionType === value.transactionType
+				        				&& refreshedLSData[i].amount === value.amount
+				        				&& refreshedLSData[i].updatedDate === value.updatedDate) {
+				        			refreshedLSData.splice(i, 1);
+				        		}
+				        	}
+				        	localStorage.accountEntries = JSON.stringify(refreshedLSData);
+					    }
+	    			});
+				}
+			});
+		}
+		function convertDateToUTC(date) {
+			return new Date(date.getUTCFullYear(), 
+					date.getUTCMonth(), 
+					date.getUTCDate(), 
+					date.getUTCHours(), 
+					date.getUTCMinutes(), 
+					date.getUTCSeconds());
+		}
+		function convertDateToLocal(date) {
+			return new Date(date + ' UTC').toString();
 		}
 	</script>
 	<img src="images/item-not-synced.png" style="display: none;" />

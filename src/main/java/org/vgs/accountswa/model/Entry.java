@@ -13,9 +13,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.NotBlank;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "entry")
@@ -47,6 +48,7 @@ public class Entry implements Serializable {
 	@Column(name = "amount")
 	private Double amount;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "updated_date")
 	private Date updatedDate;
 
