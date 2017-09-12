@@ -121,7 +121,7 @@
 			$("a", ".tab").click(function() {
 				$('div.prog-listing').show();
 				if(this.href.indexOf("#test2") !== -1) {
-					if(isOnline()) {
+					if(navigator.onLine) {
 						var request = $.ajax({
 	        				url: baseUrl + "/rest/entries",
 	        				type: "GET",
@@ -141,7 +141,7 @@
 		    });
 			$("input.autocomplete").keyup(function(){
 		    	var text = $(this).val();
-		        if(text.length >= 4) {
+		        if(text.length >= 4 && navigator.onLine) {
 		        	$('div.progress').show();
 		        	var request = $.ajax({
 		        				url: baseUrl + "/rest/autocomplete/descriptions?text=" + text,
@@ -173,7 +173,7 @@
 		    	requestObject.amount = $('#icon_prefix').val();
 		    	requestObject.updatedDate = convertDateToUTC(new Date()).toString("yyyy-MM-dd HH:mm:ss");
 		    	requestObject.id = null;
-		    	if(isOnline()) {
+		    	if(navigator.onLine) {
 			    	$.ajax({
 						url: baseUrl + "/rest/entry",
 						type: "PUT",
