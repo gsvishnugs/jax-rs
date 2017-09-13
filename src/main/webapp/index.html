@@ -15,6 +15,7 @@
     <script src="js/app.js"></script>  
     <script src="js/date.min.js"></script>
     <script src="js/hammer.min.js"></script>
+    <script src="js/Chart.min.js"></script>
     <style type="text/css">
     	.status_icon {
 		    width: 20px;
@@ -36,6 +37,7 @@
 			<ul class="tabs tabs-transparent">
 				<li class="tab"><a id="add-tab-hl" class="active" href="#test1">Add</a></li>
 				<li class="tab"><a id="view-tab-hl" href="#test2">Entries</a></li>
+				<li class="tab"><a id="insights-tab-hl" href="#test3">Insights</a></li>
 			</ul>
 		</div>
 	</nav>
@@ -88,12 +90,53 @@
 			</tbody>
 	    </table>
 	</div>
+	<div id="test3" class="col s12">
+		<div class="progress prog-insight" style="margin-top: 0px;">
+		    <div class="indeterminate"></div>
+		</div>
+		<div class="card">
+			<div class="card-content grey lighten-4">
+				<div id="test4">
+					<div class="chart-container" style="position: relative; height:40vh; width:80vw">
+						<canvas id="myChart"></canvas>
+					</div>
+				</div>
+				<div id="test5">Test 2</div>
+				<div id="test6">Test 3</div>
+				<div id="test7">Test 4</div>
+				<div id="test8">Test 5</div>
+				<div id="test9">Test 6</div>
+			</div>
+			<div class="card-tabs">
+				<ul class="tabs tabs-fixed-width">
+				  <li class="tab"><a href="#test4" class="active">Top 10 Spendings</a></li>
+				  <li class="tab"><a href="#test5">Top 20 Spendings</a></li>
+				  <li class="tab"><a href="#test6">Top 30 Spendings</a></li>
+				  <li class="tab"><a href="#test7">Top 40 Spendings</a></li>
+				  <li class="tab"><a href="#test8">Top 50 Spendings</a></li>
+				  <li class="tab"><a href="#test9">Top 60 Spendings</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
 	<script type="text/javascript">
-		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
+// 		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
+		var baseUrl = 'http://localhost:80';
 		var bodyElem = document.getElementById('body-el');
 		var swipeRecognizer = new Hammer(bodyElem);
-		swipeRecognizer.on("swipeleft swiperight", function(ev) {
+		swipeRecognizer.on("swipeleft", function(ev) {
 		    if($('#add-tab-hl').hasClass("active")) {
+		    	$('#view-tab-hl')[0].click();
+		    } else if($('#view-tab-hl').hasClass("active")) {
+		    	$('#insight-tab-hl')[0].click();
+		    } else {
+		    	$('#add-tab-hl')[0].click();
+		    }
+		});
+		swipeRecognizer.on("swiperight", function(ev) {
+		    if($('#add-tab-hl').hasClass("active")) {
+		    	$('#insight-tab-hl')[0].click();
+		    } else if($('#insight-tab-hl').hasClass("active")) {
 		    	$('#view-tab-hl')[0].click();
 		    } else {
 		    	$('#add-tab-hl')[0].click();
@@ -136,6 +179,23 @@
 			        	});	
 					} else {
 						populateEntriesListingPage();
+					}
+				} else if(this.href.indexOf("#test3") !== -1) {
+					if(isOnline()) {
+						var request = $.ajax({
+	        				url: baseUrl + "/rest/insights",
+	        				type: "GET",
+	        	            crossDomain: true,
+	        			});
+			    		request.done(function(response) {
+			    			persistInsightData(response);
+			    			populateInsights();
+			    		});
+			    		request.fail(function(jqXHR, textStatus) {
+			    			Materialize.toast(textStatus, 4000);
+			        	});	
+					} else {
+						populateInsights();
 					}
 				}
 		    });
@@ -247,6 +307,58 @@
 			$('#listing-content').html(htmlContent);
 			$('div.prog-listing').hide();
 		}
+		function populateInsights() {
+			var ctx = document.getElementById("myChart").getContext('2d');
+			var insightData = getInsightData();
+			var myChart = new Chart(ctx, {
+			    type: 'bar',
+			    data: {
+			        labels: insightData.topTenDebits.labels,
+			        datasets: [{
+			            label: 'Amount(Rs.)',
+			            data: insightData.topTenDebits.values,
+			            backgroundColor: [
+			            	'rgba(255, 99, 132, 0.2)',
+			                'rgba(54, 162, 235, 0.2)',
+			                'rgba(255, 206, 86, 0.2)',
+			                'rgba(75, 192, 192, 0.2)',
+			                'rgba(153, 102, 255, 0.2)',
+			                'rgba(255, 159, 64, 0.2)',
+			                'rgba(255, 99, 132, 0.2)',
+			                'rgba(54, 162, 235, 0.2)',
+			                'rgba(255, 206, 86, 0.2)',
+			                'rgba(75, 192, 192, 0.2)'
+			            ],
+			            borderColor: [
+			                'rgba(255,99,132,1)',
+			                'rgba(54, 162, 235, 1)',
+			                'rgba(255, 206, 86, 1)',
+			                'rgba(75, 192, 192, 1)',
+			                'rgba(153, 102, 255, 1)',
+			                'rgba(255, 159, 64, 1)',
+			                'rgba(255,99,132,1)',
+			                'rgba(54, 162, 235, 1)',
+			                'rgba(255, 206, 86, 1)',
+			                'rgba(75, 192, 192, 1)',
+			            ],
+			            borderWidth: 1
+			        }]
+			    },
+			    options: {
+			    	maintainAspectRatio: false,
+			    	responsive: true,
+			    	responsiveAnimationDuration: 1500,
+			        scales: {
+			            yAxes: [{
+			                ticks: {
+			                    beginAtZero:true
+			                }
+			            }]
+			        }
+			    }
+			});
+			$('div.prog-listing').hide();
+		}
 		function getOnlineData() {
 			var storedDataList = [];
 			if(localStorage.onlineAccountEntries != undefined 
@@ -269,6 +381,17 @@
 			}
 			return storedDataList;
 		}
+		function getInsightData() {
+			var storedData = new Object();
+			if(localStorage.onlineInsights != undefined 
+					&& localStorage.onlineInsights != 'undefined' 
+					&& localStorage.onlineInsights != null 
+					&& localStorage.onlineInsights != 'null' 
+					&& localStorage.onlineInsights.length > 0) {
+				storedData = JSON.parse(localStorage.onlineInsights);
+			}
+			return storedData;
+		}
 		function persistRemoteData(dataList) {
 			if(dataList != undefined && dataList != 'undefined' && dataList != null && dataList != 'null' && dataList.length > 0) {
 				localStorage.onlineAccountEntries = JSON.stringify(dataList);
@@ -279,6 +402,11 @@
 			if(data != undefined && data != 'undefined' && data != null && data != 'null') {
 				localDataList.push(data);
 				localStorage.offlineAccountEntries = JSON.stringify(localDataList);
+			}
+		}
+		function persistInsightData(data) {
+			if(data != undefined && data != 'undefined' && data != null && data != 'null') {
+				localStorage.onlineInsights = JSON.stringify(data);
 			}
 		}
 		function isOnline() {

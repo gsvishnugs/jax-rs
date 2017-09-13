@@ -18,6 +18,7 @@ package org.vgs.accountswa.rest;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -58,6 +59,13 @@ public class MainRestController {
 	public Response autocompleteDesc(@Valid Entry entry) throws Exception {
 		accountService.createEntry(entry);
 		return Response.ok(null, MediaType.APPLICATION_JSON).build();
+	}
+
+	@GET
+	@Path("/insights")
+	@Produces({ "application/json" })
+	public Response getTopDebitsInsight() throws Exception {
+		return Response.ok(accountService.getTopDebitsInsight(), MediaType.APPLICATION_JSON).build();
 	}
 
 }

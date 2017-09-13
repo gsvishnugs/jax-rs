@@ -9,6 +9,7 @@ var filesToCache = [
   '/js/jquery-3.2.1.min.js',
   '/js/date.min.js',
   '/js/hammer.min.js',
+  '/js/Chart.min.js',
   '/css/icon.css',
   '/css/materialize.min.css',
   '/fonts/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2',
