@@ -18,12 +18,12 @@ package org.vgs.accountswa.rest;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -62,10 +62,31 @@ public class MainRestController {
 	}
 
 	@GET
-	@Path("/insights")
+	@Path("/insights/debits")
 	@Produces({ "application/json" })
-	public Response getTopDebitsInsight() throws Exception {
-		return Response.ok(accountService.getTopDebitsInsight(), MediaType.APPLICATION_JSON).build();
+	public Response getDebitsInsight() throws Exception {
+		return Response.ok(accountService.getDebitsInsight(), MediaType.APPLICATION_JSON).build();
+	}
+
+	@GET
+	@Path("/insights/debits/{txName}")
+	@Produces({ "application/json" })
+	public Response getDebitsDetaisInsight(@PathParam(value = "txName") String txName) throws Exception {
+		return Response.ok(accountService.getDebitsDetailsInsight(txName), MediaType.APPLICATION_JSON).build();
+	}
+
+	@GET
+	@Path("/insights/credits")
+	@Produces({ "application/json" })
+	public Response getCreditsInsight() throws Exception {
+		return Response.ok(accountService.getCreditsInsight(), MediaType.APPLICATION_JSON).build();
+	}
+
+	@GET
+	@Path("/insights/credits/{txName}")
+	@Produces({ "application/json" })
+	public Response getCreditsDetaisInsight(@PathParam(value = "txName") String txName) throws Exception {
+		return Response.ok(accountService.getCreditsDetailsInsight(txName), MediaType.APPLICATION_JSON).build();
 	}
 
 }

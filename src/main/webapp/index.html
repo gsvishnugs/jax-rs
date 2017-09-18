@@ -98,31 +98,29 @@
 			<div class="card-content grey lighten-4">
 				<div id="test4">
 					<div class="chart-container" style="position: relative; height:40vh; width:80vw">
-						<canvas id="myChart"></canvas>
+						<canvas id="debitsChart"></canvas>
 					</div>
 				</div>
-				<div id="test5">Test 2</div>
-				<div id="test6">Test 3</div>
-				<div id="test7">Test 4</div>
-				<div id="test8">Test 5</div>
-				<div id="test9">Test 6</div>
+				<div id="test5">
+					<div class="chart-container" style="position: relative; height:40vh; width:80vw">
+						<canvas id="creditsChart"></canvas>
+					</div>
+				</div>
 			</div>
 			<div class="card-tabs">
 				<ul class="tabs tabs-fixed-width">
-				  <li class="tab"><a href="#test4" class="active">Top 10 Spendings</a></li>
-				  <li class="tab"><a href="#test5">Top 20 Spendings</a></li>
-				  <li class="tab"><a href="#test6">Top 30 Spendings</a></li>
-				  <li class="tab"><a href="#test7">Top 40 Spendings</a></li>
-				  <li class="tab"><a href="#test8">Top 50 Spendings</a></li>
-				  <li class="tab"><a href="#test9">Top 60 Spendings</a></li>
+				  <li class="tab"><a href="#test4" class="active">Debits</a></li>
+				  <li class="tab"><a href="#test5">Credits</a></li>
 				</ul>
 			</div>
 		</div>
 	</div>
 	<script type="text/javascript">
- 		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
+// 		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
+ 		var baseUrl = 'http://localhost:80/';
 		var bodyElem = document.getElementById('body-el');
 		var swipeRecognizer = new Hammer(bodyElem);
+		var ctx = document.getElementById("debitsChart").getContext('2d');
 		swipeRecognizer.on("swipeleft", function(ev) {
 		    if($('#add-tab-hl').hasClass("active")) {
 		    	$('#view-tab-hl')[0].click();
@@ -182,19 +180,19 @@
 				} else if(this.href.indexOf("#test3") !== -1) {
 					if(isOnline()) {
 						var request = $.ajax({
-	        				url: baseUrl + "/rest/insights",
+	        				url: baseUrl + "/rest/insights/debits",
 	        				type: "GET",
 	        	            crossDomain: true,
 	        			});
 			    		request.done(function(response) {
-			    			persistInsightData(response);
-			    			populateInsights();
+			    			persistDebitsInsightData(response);
+			    			populateDebitsInsights();
 			    		});
 			    		request.fail(function(jqXHR, textStatus) {
 			    			Materialize.toast(textStatus, 4000);
 			        	});	
 					} else {
-						populateInsights();
+						populateDebitsInsights();
 					}
 				}
 		    });
@@ -306,9 +304,8 @@
 			$('#listing-content').html(htmlContent);
 			$('div.prog-listing').hide();
 		}
-		function populateInsights() {
-			var ctx = document.getElementById("myChart").getContext('2d');
-			var insightData = getInsightData();
+		function populateDebitsInsights() {
+			var insightData = getDebitsInsightData();
 			var myChart = new Chart(ctx, {
 			    type: 'bar',
 			    data: {
@@ -347,23 +344,115 @@
 			    	maintainAspectRatio: false,
 			    	responsive: true,
 			    	responsiveAnimationDuration: 1500,
-				animation: {
-					easing: 'easeOutCubic',
-					duration: 1000
-				},
+					animation: {
+						easing: 'easeOutCubic',
+						duration: 1000
+					},
 			        scales: {
 			            yAxes: [{
+			                gridLines: {
+			                    display: false
+		                    },
 			                ticks: {
 			                    beginAtZero:true
 			                }
 			            }],
-				    xAxes: [{
-					display: false,
-					ticks: {
-					    beginAtZero:true
-					}
-				    }]
-			        }
+					    xAxes: [{
+			                gridLines: {
+			                    display: false
+		                    },
+							display: false,
+							ticks: {
+							    beginAtZero:true
+							}
+					    }]
+			        },
+			        onClick: function(c,i) {
+			            e = i[0];
+			            var x_value = this.data.labels[e._index];
+			            var y_value = this.data.datasets[0].data[e._index];
+			            //alert(e._index + ' ' + x_value + ' ' + y_value);
+			            //if$('div.prog-listing').show();
+			            if(isOnline()) {
+			            	$('div.prog-listing').show();
+							var request = $.ajax({
+		        				url: baseUrl + "/rest/insights/debits/" + x_value,
+		        				type: "GET",
+		        	            crossDomain: true,
+		        			});
+				    		request.done(function(response) {
+				    			persistDebitsDetailsInsightData(x_value, response);
+				    			generateDebitsDetailsChart(x_value);
+				    		});
+				    		request.fail(function(jqXHR, textStatus) {
+				    			Materialize.toast(textStatus, 4000);
+				        	});	
+						} else {
+							generateDebitsDetailsChart(x_value);
+						}
+		            }
+			    }
+			});
+			$('div.prog-listing').hide();
+		}
+		function generateDebitsDetailsChart(txName) {
+			var insightData = getDebitsDetailsInsightData(txName);
+			var myChart = new Chart(ctx, {
+			    type: 'line',
+			    data: {
+			        labels: insightData.debitsDetails.labels,
+			        datasets: [{
+			            label: '# of Votes',
+			            data: insightData.debitsDetails.values,
+			            backgroundColor: [
+			                'rgba(255, 99, 132, 0.2)',
+			                'rgba(54, 162, 235, 0.2)',
+			                'rgba(255, 206, 86, 0.2)',
+			                'rgba(75, 192, 192, 0.2)',
+			                'rgba(153, 102, 255, 0.2)',
+			                'rgba(255, 159, 64, 0.2)'
+			            ],
+			            borderColor: [
+			                'rgba(255,99,132,1)',
+			                'rgba(54, 162, 235, 1)',
+			                'rgba(255, 206, 86, 1)',
+			                'rgba(75, 192, 192, 1)',
+			                'rgba(153, 102, 255, 1)',
+			                'rgba(255, 159, 64, 1)'
+			            ],
+			            borderWidth: 1
+			        }]
+			    },
+			    options: {
+			        responsive: true,
+			        responsiveAnimationDuration: 1000,
+			        maintainAspectRatio: true,
+			        scales: {
+			            yAxes: [{
+					  gridLines: {
+					    display: false
+					  },
+			                ticks: {
+			                    beginAtZero:true
+			                }
+			            }],
+			            xAxes: [{
+					  gridLines: {
+					    display: false
+					  },
+					  displa: false,
+			                ticks: {
+			                    beginAtZero:true
+			                }
+			            }]
+			        },
+			        onClick: function(c,i) {
+			          e = i[0];
+			          var x_value = this.data.labels[e._index];
+			          var y_value = this.data.datasets[0].data[e._index];
+			          alert(e._index + ' ' + x_value + ' ' + y_value);
+			
+			         },
 			    }
 			});
 			$('div.prog-listing').hide();
@@ -390,14 +479,36 @@
 			}
 			return storedDataList;
 		}
-		function getInsightData() {
+		function getDebitsInsightData() {
 			var storedData = new Object();
-			if(localStorage.onlineInsights != undefined 
-					&& localStorage.onlineInsights != 'undefined' 
-					&& localStorage.onlineInsights != null 
-					&& localStorage.onlineInsights != 'null' 
-					&& localStorage.onlineInsights.length > 0) {
-				storedData = JSON.parse(localStorage.onlineInsights);
+			if(localStorage.onlineDebitsInsights != undefined 
+					&& localStorage.onlineDebitsInsights != 'undefined' 
+					&& localStorage.onlineDebitsInsights != null 
+					&& localStorage.onlineDebitsInsights != 'null' 
+					&& localStorage.onlineDebitsInsights.length > 0) {
+				storedData = JSON.parse(localStorage.onlineDebitsInsights);
+			}
+			return storedData;
+		}
+		function getDebitsDetailsInsightData(txName) {
+			var storedData = new Object();
+			if(localStorage.onlineDebitsDetailsInsights != undefined 
+					&& localStorage.onlineDebitsDetailsInsights != 'undefined' 
+					&& localStorage.onlineDebitsDetailsInsights != null 
+					&& localStorage.onlineDebitsDetailsInsights != 'null' 
+					&& localStorage.onlineDebitsDetailsInsights.length > 0) {
+				storedData = JSON.parse(localStorage.onlineDebitsDetailsInsights);
+			}
+			return storedData[txName];
+		}
+		function getCreditsInsightData() {
+			var storedData = new Object();
+			if(localStorage.onlineCreditsInsights != undefined 
+					&& localStorage.onlineCreditsInsights != 'undefined' 
+					&& localStorage.onlineCreditsInsights != null 
+					&& localStorage.onlineCreditsInsights != 'null' 
+					&& localStorage.onlineCreditsInsights.length > 0) {
+				storedData = JSON.parse(localStorage.onlineCreditsInsights);
 			}
 			return storedData;
 		}
@@ -413,9 +524,40 @@
 				localStorage.offlineAccountEntries = JSON.stringify(localDataList);
 			}
 		}
-		function persistInsightData(data) {
+		function persistDebitsInsightData(data) {
 			if(data != undefined && data != 'undefined' && data != null && data != 'null') {
-				localStorage.onlineInsights = JSON.stringify(data);
+				localStorage.onlineDebitsInsights = JSON.stringify(data);
+			}
+		}
+		function persistCreditsInsightData(data) {
+			if(data != undefined && data != 'undefined' && data != null && data != 'null') {
+				localStorage.onlineCreditsInsights = JSON.stringify(data);
+			}
+		}
+		function persistDebitsDetailsInsightData(txName, data) {
+			var storedData = new Object();
+			if(localStorage.onlineDebitsDetailsInsights != undefined 
+					&& localStorage.onlineDebitsDetailsInsights != 'undefined' 
+					&& localStorage.onlineDebitsDetailsInsights != null 
+					&& localStorage.onlineDebitsDetailsInsights != 'null') {
+				storedData = JSON.parse(localStorage.onlineDebitsDetailsInsights);
+			}
+			if(data != undefined && data != 'undefined' && data != null && data != 'null') {
+				storedData[txName] = data;
+				localStorage.onlineDebitsDetailsInsights = JSON.stringify(storedData);
+			}
+		}
+		function persistCreditsDetailsInsightData(txName, data) {
+			var storedData = new Object();
+			if(localStorage.onlineCreditsDetailsInsights != undefined 
+					&& localStorage.onlineCreditsDetailsInsights != 'undefined' 
+					&& localStorage.onlineCreditsDetailsInsights != null 
+					&& localStorage.onlineCreditsDetailsInsights != 'null') {
+				storedData = JSON.parse(localStorage.onlineCreditsDetailsInsights);
+			}
+			if(data != undefined && data != 'undefined' && data != null && data != 'null') {
+				storedData[txName] = data;
+				localStorage.onlineCreditsDetailsInsights = JSON.stringify(storedData);
 			}
 		}
 		function isOnline() {
