@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "entry")
-@NamedQueries({ @NamedQuery(name = "Entry.getAll", query = "SELECT e FROM Entry e") })
+@NamedQueries({ @NamedQuery(name = "Entry.getAll", query = "SELECT e FROM Entry e")})
 public class Entry implements Serializable {
 
 	/**

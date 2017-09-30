@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -116,6 +117,12 @@ public class AccountService {
 		Map<String, Map<String, List<Object>>> insightResultMap = new HashMap<String, Map<String, List<Object>>>();
 		insightResultMap.put("creditsDetails", creditsDetaisMap);
 		return insightResultMap;
+	}
+
+	public void deleteEntry(Long id) {
+		Query query = em.createQuery("delete Entry where id = :id");
+		query.setParameter("id", id);
+		query.executeUpdate();
 	}
 
 }

@@ -116,7 +116,8 @@
 		</div>
 	</div>
 	<script type="text/javascript">
- 		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
+// 		var baseUrl = 'https://wfly10-accounts-wa-accounts.1d35.starter-us-east-1.openshiftapps.com';
+		var baseUrl = 'http://127.0.0.1:8080/accounts-wa';
 		var bodyElem = document.getElementById('body-el');
 		var swipeRecognizer = new Hammer(bodyElem);
 		var ctx = document.getElementById("debitsChart").getContext('2d');
@@ -298,12 +299,48 @@
 					img_status = 'images/item-offline.png';
 					img_title = 'Data served from local storage(Synced)';
 				}
-				htmlContent += '<tr><td><img src="' + img_status + '" class="status_icon" title="' + img_title + '"/>' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td><td>' + new Date(convertDateToLocal(value.updatedDate)).toString("yyyy-MM-dd HH:mm:ss") + '</td></tr>';
+				htmlContent += '<tr id="entryid-' + value.id + '"><td><i class="material-icons prefix status_icon" style="cursor: pointer;" onclick="deleteEntry(' + value.id + ')">delete</i><img src="' + img_status + '" class="status_icon" title="' + img_title + '"/>' + value.transactionName + '</td><td>' + value.transactionType + '</td><td>' + value.amount + '</td><td>' + new Date(convertDateToLocal(value.updatedDate)).toString("yyyy-MM-dd HH:mm:ss") + '</td></tr>';
 			});
 			$('#listing-content').html(htmlContent);
 			$('div.prog-listing').hide();
 		}
+		function deleteEntry(id) {
+			$('div.prog-listing').show();
+			$.ajax({
+				url: baseUrl + "/rest/entry/" + id,
+				type: "GET",
+				dataType: "json",
+				contentType: "application/json",
+	            crossDomain: true,
+	            statusCode: {
+	            	200: function(xhr) {
+	                	$('div.prog-listing').hide();
+		    			$('#entryid-' + id).remove();
+		    			removeEntryFromLocalDb(id);
+		    			removeEntryFromOnlineDb(id)
+		    			Materialize.toast("Entry deleted", 4000);
+				    },
+				    500: function(xhr) {
+				    	$('div.prog-listing').hide();
+			    		Materialize.toast("Delete Faied", 4000);
+					},
+				    404: function(xhr) {
+				    	$('div.prog-listing').hide();
+			    		Materialize.toast("Delete Faied", 4000);
+					},
+				    400: function(xhr) {
+				    	$('div.prog-listing').hide();
+			    		Materialize.toast("Delete Faied", 4000);
+					},
+				    503: function(xhr) {
+				    	$('div.prog-listing').hide();
+			    		Materialize.toast("Delete Faied", 4000);
+					}
+	            }
+			});	
+		}
 		function populateDebitsInsights() {
+			$('div.prog-listing').show();
 			var insightData = getDebitsInsightData();
 			var myChart = new Chart(ctx, {
 			    type: 'bar',
@@ -395,6 +432,7 @@
 			$('div.prog-listing').hide();
 		}
 		function generateDebitsDetailsChart(txName) {
+			$('div.prog-listing').show();
 			var insightData = getDebitsDetailsInsightData(txName);
 			var myChart = new Chart(ctx, {
 			    type: 'line',
@@ -477,6 +515,24 @@
 				storedDataList = JSON.parse(localStorage.offlineAccountEntries);
 			}
 			return storedDataList;
+		}
+		function removeEntryFromLocalDb(id) {
+			var localDataList = getLocalData();
+        	for(var i = 0; i < localDataList.length; i++) {
+        		if(localDataList[i].id != undefined && localDataList[i].id != null && localDataList[i].id != 'null' && localDataList[i].id === id) {
+        			localDataList.splice(i, 1);
+        		}
+        	}
+        	localStorage.offlineAccountEntries = JSON.stringify(localDataList);
+		}
+		function removeEntryFromOnlineDb(id) {
+			var onlineDataList = getOnlineData();
+        	for(var i = 0; i < onlineDataList.length; i++) {
+        		if(onlineDataList[i].id != undefined && onlineDataList[i].id != null && onlineDataList[i].id != 'null' && onlineDataList[i].id === id) {
+        			onlineDataList.splice(i, 1);
+        		}
+        	}
+        	localStorage.onlineAccountEntries = JSON.stringify(onlineDataList);
 		}
 		function getDebitsInsightData() {
 			var storedData = new Object();

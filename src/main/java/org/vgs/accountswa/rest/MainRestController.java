@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -56,8 +57,17 @@ public class MainRestController {
 	@Path("/entry")
 	@Produces({ "application/json" })
 	@Consumes({ "application/json" })
-	public Response autocompleteDesc(@Valid Entry entry) throws Exception {
+	public Response createEntry(@Valid Entry entry) throws Exception {
 		accountService.createEntry(entry);
+		return Response.ok("Success", MediaType.APPLICATION_JSON).build();
+	}
+
+	@GET
+	@Path("/entry/{id}")
+	@Produces({ "application/json" })
+	@Consumes({ "application/json" })
+	public Response deleteEntry(@PathParam(value="id") Long id) throws Exception {
+		accountService.deleteEntry(id);
 		return Response.ok(null, MediaType.APPLICATION_JSON).build();
 	}
 
